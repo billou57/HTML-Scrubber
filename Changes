@@ -1,6 +1,6 @@
 Revision history for Perl extension HTML::Scrubber.
 
-0.04  
+0.04  Wed Oct 29 18:35:08 2003
     - added missing lc in a few places (and got rid of for @_)
     - fixed (and improved) optimizations (stupid typo)
     - added DESTROY to break circular reference (I lost my TODO, so i forgot)
