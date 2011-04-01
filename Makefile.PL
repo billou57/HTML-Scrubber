@@ -1,22 +1,63 @@
-use ExtUtils::MakeMaker;
-# See lib/ExtUtils/MakeMaker.pm for details of how to influence
-# the contents of the Makefile that is written.
-WriteMakefile(
-    'NAME'		=> 'HTML::Scrubber',
-    'VERSION_FROM'	=> 'Scrubber.pm', # finds $VERSION
-    'PREREQ_FATAL'  => 1,
-    'PREREQ_PM'		=> {
-        'HTML::Parser' => 3,
-        'Test'         => 0,
-        'Test::More'   => 0,
-    }, # e.g., Module::Name => 1.1
-    ($] >= 5.005 ?    ## Add these new keywords supported since 5.005
-      (ABSTRACT_FROM => 'Scrubber.pm', # retrieve abstract from module
-       AUTHOR     => 'D. H. aka PodMaster') : ()),
+
+use strict;
+use warnings;
+
+
+
+use ExtUtils::MakeMaker 6.31;
+
+
+
+my %WriteMakefileArgs = (
+  'ABSTRACT' => 'Perl extension for scrubbing/sanitizing html',
+  'AUTHOR' => 'Nigel Metheringham <nigelm@cpan.org>, D. H. <podmaster@cpan.org>',
+  'BUILD_REQUIRES' => {
+    'Carp' => '0',
+    'English' => '0',
+    'File::Find' => '0',
+    'File::Spec' => '0',
+    'File::Temp' => '0',
+    'Scalar::Util' => '0',
+    'Test' => '0',
+    'Test::More' => '0.94',
+    'perl' => '5.004'
+  },
+  'CONFIGURE_REQUIRES' => {
+    'ExtUtils::MakeMaker' => '6.31'
+  },
+  'DISTNAME' => 'HTML-Scrubber',
+  'EXE_FILES' => [],
+  'LICENSE' => 'perl',
+  'NAME' => 'HTML::Scrubber',
+  'PREREQ_PM' => {
+    'HTML::Entities' => '0',
+    'HTML::Parser' => '0',
+    'vars' => '0'
+  },
+  'VERSION' => '0.09',
+  'test' => {
+    'TESTS' => 't/*.t'
+  }
 );
 
-__END__
-perl Makefile.PL && nmake realclean && cls && perl Makefile.PL && nmake disttest
-nmake dist TAR=ptar
-chmod 7777 *.gz
-perl -le" `cpan-upload $_` for( (sort glob q,*.gz,)[-1]) "
+
+unless ( eval { ExtUtils::MakeMaker->VERSION(6.56) } ) {
+  my $br = delete $WriteMakefileArgs{BUILD_REQUIRES};
+  my $pp = $WriteMakefileArgs{PREREQ_PM};
+  for my $mod ( keys %$br ) {
+    if ( exists $pp->{$mod} ) {
+      $pp->{$mod} = $br->{$mod} if $br->{$mod} > $pp->{$mod};
+    }
+    else {
+      $pp->{$mod} = $br->{$mod};
+    }
+  }
+}
+
+delete $WriteMakefileArgs{CONFIGURE_REQUIRES}
+  unless eval { ExtUtils::MakeMaker->VERSION(6.52) };
+
+WriteMakefile(%WriteMakefileArgs);
+
+
+
